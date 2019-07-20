@@ -14,9 +14,9 @@ header-includes:
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
 
-      gtag('config', 'UA-140731880-1');
+        gtag('config', 'UA-140731880-1');
     </script>
 
 include-after:
-    <a style="color:black;font-size:1em;float:right;margin-right:30px;margin-bottom:40px;" href="../index.html">[Return to the homepage]</a>
+    <a style="color:black;font-size:1em;float:right;margin-right:30px;margin-bottom:40px;" href="../../index.html">[Return to the homepage]</a>
 ---

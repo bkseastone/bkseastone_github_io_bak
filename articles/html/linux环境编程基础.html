@@ -74,6 +74,6 @@
 </blockquote>
 <h2 id="僵尸进程">僵尸进程</h2>
 <p>在每个进程退出的时候，内核释放该进程所有的资源，包括打开的文件、占用的内存等，但是仍然为其保留一定的信息(包括进程号，退出状态，运行时间等)， 只有父进程通过<em>wait/waitpid</em>来取时才释放，否则其进程号就会一定被占用，这样就导致了僵尸进程的问题。</p>
-<a style="color:black;font-size:1em;float:right;margin-right:30px;margin-bottom:40px;" href="../index.html">[Return to the homepage]</a>
+<a style="color:black;font-size:1em;float:right;margin-right:30px;margin-bottom:40px;" href="../../index.html">[Return to the homepage]</a>
 </body>
 </html>
