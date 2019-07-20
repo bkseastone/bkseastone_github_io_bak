@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>自然语言处理基础</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="../style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <link rel="icon" href="../imgs/favicon.ico" type="image/x-icon"/> <link rel="shortcut icon" href="../imgs/favicon.ico" type="image/x-icon" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-140731880-1"></script>
+  <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date());
+  gtag('config', 'UA-140731880-1'); </script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">自然语言处理基础</h1>
+<p class="date">2018-04-19 09:50:59</p>
+</header>
+<nav id="TOC">
+<ul>
+<li><a href="#术语">术语</a></li>
+<li><a href="#统计语言模型statistical-language-model">统计语言模型（statistical language model）</a></li>
+<li><a href="#词符表示tocken">词符表示（tocken）</a></li>
+</ul>
+</nav>
+<h2 id="术语">术语</h2>
+<ul>
+<li>词典（词表）：目标语言的所有单词，记为<span class="math inline">\(\mathcal{D}\)</span>。</li>
+<li>语料库（Corpus）：即手中的数据集，记为<span class="math inline">\(\mathcal{C}\)</span>。</li>
+<li>上下文（context）：词汇所处的共现词、语境、前邻词、后邻词等词汇出现的篇章语境信息。</li>
+<li>词符（tocken）：目标语言中一个词的标记，即指一个单词。</li>
+<li>词串：一系列词符前后连接成串。</li>
+<li>词串共现：两个词串在同一个句子中。</li>
+<li>历史词：出现在该词符之前的所有词。</li>
+</ul>
+<h2 id="统计语言模型statistical-language-model">统计语言模型（statistical language model）</h2>
+<p>统计语言模型是基于大数定律，结合贝叶斯公式，利用语料库来计算一个句子（或词串）的概率的。n 个词串共现的概率为： <span class="math display">\[
+P(W) = P(w_1)P(w_2|w_1)...P(w_n|w_1,w_2,...,w_{n-1})
+\\
+where, \quad P(w_i) = \frac{count(w_i)}{count(\mathcal{C})}
+\\
+P(w_i|w_1,...,w_{i-1}) = \frac{count(w_1,...,w_{i-1},w_i)}{count(w_1,...,w_{i-1})}
+\]</span> 求解该模型的方法有很多，n-gram 模型、决策树、最大熵模型、最大熵马尔科夫模型、条件随机场、神经网络等。</p>
+<p>当所有的概率值都计算好之后便存储起来，下次需要计算一个词串的概率时，只需找到相关的概率参数，将之连乘即可。</p>
+<h3 id="n-gram">n-gram</h3>
+<p>添加 n-1 阶马尔科夫假设，得到 n-gram 模型（假设为 3-gram）： <span class="math display">\[
+P(w_i|w_1,...,w_{i-1}) = \frac{count(w_{i-2},w_{i-1},w_i)}{count(w_{i-2},w_{i-1})}
+\]</span></p>
+<p>当 n 越大：</p>
+<ol type="1">
+<li>模型对历史词的关联性越强，故可区别性越好（模型复杂度越高）；</li>
+<li>因模型复杂度呈指数级增高，大数定理的可靠性便越来越差（可理解为一种过拟合现象，因为模型复杂度相对于样本复杂度过高）。</li>
+</ol>
+<h4 id="数据稀疏问题">数据稀疏问题</h4>
+<blockquote>
+<p>产生该问题的根本原因是采用了统计语言模型。</p>
+</blockquote>
+<ol type="1">
+<li>语料库中可能出现<span class="math inline">\(count(w_1,...,w_{i-1},w_i) = 0\)</span>的情况，即该词串永远不会出现，但不应认为<span class="math inline">\(P(w_i|w_1,...,w_{i-1})=0\)</span>；</li>
+<li>语料库中可能出现<span class="math inline">\(count(w_1,...,w_{i-1}) = count(w_1,...,w_{i-1},w_i)\)</span>的情况，但不应认为$P(w_i|w_1,…,w_{i-1})=$1。</li>
+</ol>
+<p>这两种问题称为数据稀疏问题，该问题的出现与语料库的大小无关，由<a href="https://www.gelbukh.com/CV/Publications/2001/CICLing-2001-Zipf.htm">Zipf定律</a>知，在自然语言的语料库里，一个单词出现的频率与它在频率表里的排名成反比，故增大语料库依然无法解决数据稀疏问题。</p>
+<p>在 n-gram 模型中，当 n 达到一定值后，即使样本复杂度足够，由于数据稀疏问题，n 越大，性能反而越差。</p>
+<h4 id="平滑技术">平滑技术</h4>
+<p>平滑技术是针对数据稀疏问题引入的技术，常用的有：</p>
+<ul>
+<li>平滑：拉普拉斯平滑（加一平滑）、Lidstone 平滑（加 delta 平滑）、good-turing 平滑。</li>
+<li>回退：backoff、interpolation（软回退）、kneser-ney smoothing。</li>
+</ul>
+<h3 id="nnlm">NNLM</h3>
+<p>Bengio et. al（2003）</p>
+<h2 id="词符表示tocken">词符表示（tocken）</h2>
+<h3 id="discrete-representation">discrete representation</h3>
+<p>独热（one-hot representation）：可认为是一种基于符号的词表示方法。</p>
+<h3 id="distributed-representation">distributed representation</h3>
+<blockquote>
+<p>基于分布式相似度的表示，英文全称为 distributional similarity based representations。</p>
+<p>You shall know a word by the company it keeps. – J.R.Firth 1957:11</p>
+</blockquote>
+<h4 id="共现矩阵cooccurence-matrix">共现矩阵（cooccurence matrix）</h4>
+<p>用上下文来表示一个单词的方法。有两种计算方法：</p>
+<ul>
+<li>基于整个段落的，又称为潜在语义分析。</li>
+<li>基于窗口的（窗口内一般为5~10个单词，共现矩阵的行是窗口个数，列为所有不重复单词个数），优点是将语义和语法都考虑了进去。</li>
+</ul>
+<p>缺点是维度灾难，常用 SVD 来压缩矩阵以实现降维。</p>
+<h4 id="词向量">词向量</h4>
+<a style="color:black;font-size:1em;float:right;margin-right:30px;margin-bottom:40px;" href="../index.html">[Return to the homepage]</a>
+</body>
+</html>
