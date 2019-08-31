@@ -1,9 +1,10 @@
 ---
-title: LaTex简易教程
+title: 'LaTex简易教程'
 date: 2017-12-15 13:52:21
-categories: script
-toc: true
-description: 文章结构控制，公式控制，列表控制
+tags: [cs]
+published: true
+hideInList: false
+feature: 
 ---
 
 # 第一章

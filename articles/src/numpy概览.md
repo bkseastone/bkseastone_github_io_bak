@@ -1,11 +1,11 @@
 ---
-title: numpy概览
+title: 'numpy概览'
 date: 2018-03-08 21:46:27
-categories: script
-toc: true
-description: 术语，数据类型
+tags: [cs]
+published: true
+hideInList: false
+feature: 
 ---
-
 ## 术语
 
 

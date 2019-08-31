@@ -1,9 +1,10 @@
 ---
-title: makefile基础
+title: 'makefile基础'
 date: 2018-02-20 15:15:48
-categories: cs
-toc: true
-description: 文件基本格式，变量，条件判断，循环，字符串替换
+tags: [cs]
+published: true
+hideInList: false
+feature: 
 ---
 
 # 文件基本格式

@@ -1,9 +1,10 @@
 ---
-title: shell中括号使用总结
+title: 'shell中括号使用总结'
 date: 2017-08-14 20:19:45
-categories: script
-toc: true
-description: shell中括号使用总结
+tags: [cs]
+published: true
+hideInList: false
+feature: 
 ---
 
 # ${var}

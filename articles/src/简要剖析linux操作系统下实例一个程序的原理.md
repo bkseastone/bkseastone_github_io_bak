@@ -1,12 +1,15 @@
 ---
-title: 简要剖析linux操作系统下执行一个程序的原理
+title: '简要剖析linux操作系统下执行一个程序的原理'
 date: 2017-05-21 17:46:55
-categories: cs
-toc: true
-description: 预备知识，例子，附1，附2，
+tags: [cs]
+published: true
+hideInList: false
+feature: 
 ---
 
 # 预备知识
+
+<http://www.codebelief.com/article/2018/12/task-is-still-running-after-linux-shell-exits/>
 
 * 程序只是一段代码，独立的程序没有任何实际意义，只有将它置于一定的环境（上下文）内才有其意义。比如说，一个用C#写成的一段hello world代码在windows环境下编译生成的一个程序文件，将它放在ARM机里，在它实例化之前（即执行前），它与ARM机里其他可以执行的程序是一样的，只是一个占据着一定内存空间的二进制文件；一旦将这些二进制文件执行，实例化后产生的东西（称为进程）便具有了实际意义，即这个进程所能实现的功能，当然前提是它能在该环境中实例化，前面所提的C#程序文件便不能在ARM机中实例化。
     - 综上，程序可认为是进程的抽象，一个程序可以实例化出任意多个进程。
@@ -23,7 +26,7 @@ description: 预备知识，例子，附1，附2，
 
 建立“子栈”的概念。从一个函数A跳转到另一个函数B时会创建一个临时堆栈，称函数A（调用者）所在的堆栈为父栈，称函数B（被调用者）所在的堆栈为子栈。调用者的活动记录被看为父栈的栈框架，代表着父栈的结束子栈的开始。
 
-![childStack](/home/weisongw/workspace/gitpage_img/dataStructure/childStack.jpg)
+![childStack](https://bkseastone.github.io/images/dataStructure/childStack.jpg)
 
 函数的活动记录按出栈顺序包括五个部分（真正能称为函数活动记录的只有2和3，故1-5称为栈框架更合理）：
 

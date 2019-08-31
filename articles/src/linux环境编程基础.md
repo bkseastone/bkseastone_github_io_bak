@@ -1,9 +1,10 @@
 ---
-title: linux环境编程基础
+title: 'linux环境编程基础'
 date: 2018-03-01 20:22:46
-categories: cs
-toc: true
-description: 内核，文件，库，进程
+tags: [cs]
+published: true
+hideInList: false
+feature: 
 ---
 
 ## 内核

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh" xml:lang="zh">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>makefile基础</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="style.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <link rel="icon" href="../../imgs/favicon.ico" type="image/x-icon"/> <link rel="shortcut icon" href="../../imgs/favicon.ico" type="image/x-icon" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-140731880-1"></script>
+  <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date());
+  gtag('config', 'UA-140731880-1'); </script>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">makefile基础</h1>
+<p class="date">2018-02-20 15:15:48</p>
+</header>
+<nav id="TOC">
+<ul>
+<li><a href="#文件基本格式">文件基本格式</a></li>
+<li><a href="#变量">变量</a><ul>
+<li><a href="#自动变量">自动变量</a></li>
+<li><a href="#多行变量">多行变量</a></li>
+<li><a href="#静态模式以通配">静态模式：以%通配</a></li>
+</ul></li>
+<li><a href="#条件判断">条件判断</a><ul>
+<li><a href="#基本格式">基本格式</a></li>
+<li><a href="#可用的条件判断">可用的条件判断</a></li>
+</ul></li>
+<li><a href="#循环">循环</a></li>
+<li><a href="#字符串替换函数">字符串替换函数</a></li>
+</ul>
+</nav>
+<h1 id="文件基本格式">文件基本格式</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="ex">target</span>:prerequisites</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">[<span class="ex">tab</span>] commands</a></code></pre></div>
+<ul>
+<li><p>若prerequisites中有一个文件比target文件新，则执行commands所定义的命令。 若显式指明target为伪目标，即<code>.PHONY:target</code>，则<code>make</code>命令将跳过文件检查， 直接执行对应的命令，由此避免了因当前目录下有target文件而不会执行命令的问题。</p></li>
+<li><p>若make未指定目标则缺省执行第一个目标。</p></li>
+<li><p>命令按行解析，每行命令都在单独的进程中执行。</p></li>
+<li><p>在[tab]后commands前添加<code>@</code>，可关闭回显，常用于<code>echo</code>命令。</p></li>
+</ul>
+<blockquote>
+<p><code>include filename</code>命令可将其他文件包含进来，若在该命令行首添加<code>-</code>， 表示忽略可能会出现的文件包含错误。</p>
+</blockquote>
+<h1 id="变量">变量</h1>
+<ul>
+<li>变量在使用时展开，形式上类似宏替换，如此引用<code>$(var)</code>，而引用shell变量时用<code>$$</code>。</li>
+<li>变量定义的四种格式：
+<ul>
+<li><code>var=value</code>在执行时才扩展</li>
+<li><code>var:=value</code>在定义时便扩展，直接使用右侧的现值</li>
+<li><code>var?=value</code>若变量为空则设置该值，否则维持原值</li>
+<li><code>var+=value</code>将值追加到变量尾部，继承上次的操作符，若未定义过则自动解释为<code>=</code> ## 特殊变量</li>
+</ul></li>
+<li><p>内置变量<code>$(CC)</code>当前使用的编译器</p></li>
+<li><p><code>$(MAKE)</code>当前使用的make工具</p></li>
+</ul>
+<h2 id="自动变量">自动变量</h2>
+<ul>
+<li><p><code>$@</code>当前目标</p></li>
+<li><p><code>$^</code>所有先决条件，<code>$?</code>比目标更新的所有先决条件。</p></li>
+<li><p><code>$&lt;</code>第一个先决条件</p></li>
+</ul>
+<h2 id="多行变量">多行变量</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="ex">define</span> var</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">    <span class="ex">commands</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="ex">endef</span></a></code></pre></div>
+<p><em>主要用于定义命令包，每行命令都在单独的进程中执行，故展开时有可能导致脚本错误。</em></p>
+<h2 id="静态模式以通配">静态模式：以%通配</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="va">objs=</span>main.o <span class="ex">library.o</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="ex">all</span>:<span class="va">$(</span><span class="ex">objs</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">    <span class="va">$(</span><span class="fu">cc</span><span class="va">)</span> <span class="ex">-o</span> a <span class="va">$(</span><span class="ex">objs</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="va">$(</span><span class="ex">objs</span><span class="va">)</span>:<span class="ex">%.o</span>:%.c</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">    <span class="va">$(</span><span class="ex">CC</span><span class="va">)</span> <span class="ex">-c</span> $<span class="op">&lt;</span> -o <span class="va">$@</span></a></code></pre></div>
+<h1 id="条件判断">条件判断</h1>
+<h2 id="基本格式">基本格式</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="ex">conditional-directive</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">    <span class="ex">commands</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"><span class="kw">else</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">    <span class="ex">commands</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="ex">endif</span></a></code></pre></div>
+<h2 id="可用的条件判断">可用的条件判断</h2>
+<ul>
+<li><code>ifeq(var1,var2)</code> 两参数是否相等</li>
+<li><code>ifneq(var1,var2)</code> 两参数是否不等</li>
+<li><code>ifdef var</code> 变量是否已定义</li>
+<li><code>ifndef var</code> 变量是否未定义</li>
+</ul>
+<h1 id="循环">循环</h1>
+<p><em>可使用shell循环</em></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="ex">objs</span> = file1 file2</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="ex">rulefor</span>:</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">    <span class="kw">for</span> <span class="ex">filename</span> in <span class="kw">`</span><span class="bu">echo</span> <span class="va">$(</span><span class="ex">objs</span><span class="va">)</span><span class="kw">`;</span> <span class="kw">\</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">    <span class="kw">do</span> <span class="kw">\</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">        <span class="fu">touch</span> <span class="va">$$</span>filename<span class="kw">;</span> <span class="kw">\</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">    <span class="kw">done</span></a></code></pre></div>
+<p><em><code>\</code>保证了多行命令在同一进程下执行，因命令是在shell下执行的， 故<code>filename</code>为shell变量，自然用<code>$$</code>引用。</em></p>
+<h1 id="字符串替换函数">字符串替换函数</h1>
+<p><em>示例</em></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="ex">comma</span> := ,</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="ex">empty</span> := </a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="ex">space</span> := <span class="va">$(</span><span class="ex">empty</span><span class="va">)</span> <span class="va">$(</span><span class="ex">empty</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4"><span class="ex">str1</span> := a b c</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="ex">str2</span> := <span class="va">$(</span><span class="ex">subst</span> <span class="va">$(</span><span class="ex">space</span><span class="va">)</span>,<span class="va">$(</span><span class="ex">comma</span><span class="va">)</span>,<span class="va">$(</span><span class="ex">str</span><span class="va">))</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="ex">result</span>:</a>
+<a class="sourceLine" id="cb6-7" data-line-number="7">    <span class="ex">@echo</span> <span class="va">$(</span><span class="ex">str1</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb6-8" data-line-number="8">    <span class="ex">@echo</span> <span class="va">$(</span><span class="ex">str2</span><span class="va">)</span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9">    <span class="ex">@echo</span> <span class="st">&quot;done&quot;</span></a></code></pre></div>
+<a style="color:black;font-size:1em;float:right;margin-right:30px;margin-bottom:40px;" href="../../index.html">[Return to the homepage]</a>
+</body>
+</html>
